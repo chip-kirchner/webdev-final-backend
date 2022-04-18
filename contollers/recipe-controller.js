@@ -11,11 +11,11 @@ const findAllRecipes = async (req, res) => {
 };
 
 const findById = async (req, res) => {
-    const recipeId = req.params.rid;
+    const mealId = req.params.rid;
 
-    const recipe = await recipeDao.findById(recipeId)
+    const recipe = await recipeDao.findById(mealId)
     if (recipe !== null) {
-        const toReturn = {...recipe, liked: recipe.liked.length};
+        const toReturn = {...recipe.toObject(), liked: recipe.liked.length};
         res.json(toReturn);
     } else {
         res.sendStatus(404);
@@ -35,10 +35,10 @@ const likeRecipe = async (req, res) => {
             res.sendStatus(500);
         }
     } else {
-        console.log(currentRecipe.liked);
+
         const newLikes = currentRecipe.liked.concat(userToAdd);
-        console.log({...currentRecipe._doc, liked: newLikes});
-        const status = await recipeDao.updateRecipe(recipe.idMeal, {...currentRecipe._doc, liked: newLikes});
+        const status = await recipeDao.updateRecipe(recipe.idMeal, {...currentRecipe.toObject(), liked: newLikes});
+
         res.send(status);
     }
 }
