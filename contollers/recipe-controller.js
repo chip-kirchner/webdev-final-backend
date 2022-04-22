@@ -25,21 +25,24 @@ const findById = async (req, res) => {
 
 const likeRecipe = async (req, res) => {
     const {recipe} = req.body;
-    const {userToAdd} = req.body;
+    const {user} = req.body;
     const currentRecipe = await recipeDao.findById(recipe.idMeal);
     if (currentRecipe === null) {
         try{
-            const status = await recipeDao.createRecipe({...recipe, liked: [userToAdd]});
+            const status = await recipeDao.createRecipe({...recipe, liked: [user]});
             res.send(status);
         } catch (e) {
             res.sendStatus(500);
         }
     } else {
-
-        const newLikes = currentRecipe.liked.concat(userToAdd);
-        const status = await recipeDao.updateRecipe(recipe.idMeal, {...currentRecipe.toObject(), liked: newLikes});
-
-        res.send(status);
+        const included = currentRecipe.liked.map(liker => liker._id === user._id);
+        if (included) {
+            res.sendStatus(409);
+        } else {
+            const newLikes = currentRecipe.liked.concat(user);
+            const status = await recipeDao.updateRecipe(recipe.idMeal, {...currentRecipe.toObject(), liked: newLikes});
+            res.send(status);
+        }
     }
 }
 
