@@ -1,10 +1,8 @@
 import * as usersDao from "../daos/users-dao.js";
 
-
 const signup = async (req, res) => {
     const credentials = req.body;
     const existingUser = await usersDao.findUserByEmail(credentials.email);
-    console.log(existingUser);
     if (existingUser) {
         return res.sendStatus(403);
     } else {
@@ -40,10 +38,29 @@ const profile = async (req, res) => {
     }
 }
 
+const updateProfile = async (req, res) => {
+    const oldProfile = req.session['profile'];
+    const {profile} = req.body;
+    console.log(profile)
+    if (oldProfile && profile) {
+        try {
+            const newProfile = {...oldProfile, ...profile};
+            const response = await usersDao.updateUser(oldProfile._id, newProfile);
+            req.session['profile'] = newProfile;
+            res.json(newProfile);
+        } catch (e) {
+            res.sendStatus(503);
+        }
+    } else {
+        res.sendStatus(503);
+    }
+}
+
 const authController = (app) => {
     app.post("/api/signup", signup);
     app.post("/api/login", login);
     app.post("/api/logout", logout);
     app.post("/api/profile", profile);
+    app.put("/api/profile/update", updateProfile);
 }
 export default authController;

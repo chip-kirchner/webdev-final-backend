@@ -8,3 +8,5 @@ export const findUserByEmail= async (email) => {
 export const findUserByCredentials = async (email, password) => userModel.findOne({email, password});
 
 export const createUser = async (user) => userModel.create(user);
+
+export const updateUser = async (_id, user) => userModel.updateOne({_id}, {$set: user});
