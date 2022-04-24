@@ -1,6 +1,13 @@
 import recipeModel from '../models/recipe-model.js';
 
 export const findAllRecipes = async () => recipeModel.find();
+
+export const findTheseRecipes = async (recipes) => recipeModel.find({
+    "idMeal" : {
+        $in: recipes
+    }
+});
+
 export const findById = async (idMeal) => {
     const recipe = recipeModel.findOne({idMeal});
     return recipe;

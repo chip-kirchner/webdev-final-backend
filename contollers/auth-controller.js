@@ -20,7 +20,7 @@ const login = async (req, res) => {
         res.json(profile);
         return;
     } else {
-        res.sendStatus(403);
+        res.sendStatus(402);
     }
 }
 
@@ -34,14 +34,13 @@ const profile = async (req, res) => {
     if (profile) {
         res.json(profile);
     } else {
-        res.sendStatus(503);
+        res.sendStatus(401);
     }
 }
 
 const updateProfile = async (req, res) => {
     const oldProfile = req.session['profile'];
     const {profile} = req.body;
-    console.log(profile)
     if (oldProfile && profile) {
         try {
             const newProfile = {...oldProfile, ...profile};
@@ -52,7 +51,7 @@ const updateProfile = async (req, res) => {
             res.sendStatus(503);
         }
     } else {
-        res.sendStatus(503);
+        res.sendStatus(401);
     }
 }
 
