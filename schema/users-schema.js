@@ -5,7 +5,7 @@ const schema = mongoose.Schema({
     name: {type: String, default: ""},
     role: {type: String, required: true, default: "pleb"},
     favoriteRecipes: [{idMeal: Number}],
-    following: [String]
+    following: [{type: mongoose.Schema.Types.ObjectId, ref: 'users'}]
 }, {collection: 'users'});
 
 export default schema;
