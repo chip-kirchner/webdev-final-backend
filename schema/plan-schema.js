@@ -9,6 +9,6 @@ const schema = mongoose.Schema({
     friday: {type: mongoose.Schema.Types.ObjectId, ref: 'recipes'},
     saturday: {type: mongoose.Schema.Types.ObjectId, ref: 'recipes'},
     likedBy: [{type: mongoose.Schema.Types.ObjectId, ref: 'users'}]
-}, {collection: 'posts', timestamps: true});
+}, {collection: 'plans', timestamps: true});
 
 export default schema;
