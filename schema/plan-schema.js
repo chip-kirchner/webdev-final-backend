@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 const schema = mongoose.Schema({
     user: {type: mongoose.Schema.Types.ObjectId, ref: 'users', required: true},
+    title: {type: String, required: true},
     sunday: {type: mongoose.Schema.Types.ObjectId, ref: 'recipes'},
     monday: {type: mongoose.Schema.Types.ObjectId, ref: 'recipes'},
     tuesday: {type: mongoose.Schema.Types.ObjectId, ref: 'recipes'},
@@ -8,6 +9,7 @@ const schema = mongoose.Schema({
     thursday: {type: mongoose.Schema.Types.ObjectId, ref: 'recipes'},
     friday: {type: mongoose.Schema.Types.ObjectId, ref: 'recipes'},
     saturday: {type: mongoose.Schema.Types.ObjectId, ref: 'recipes'},
+    published: {type: Boolean, default: false},
     likedBy: [{type: mongoose.Schema.Types.ObjectId, ref: 'users'}]
 }, {collection: 'plans', timestamps: true});
 

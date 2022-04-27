@@ -10,12 +10,27 @@ const favorites = async (req, res) => {
         res.json(response.map(temp => ({...temp.toObject(), liked: temp.liked.length})));
         return;
     } else {
-        res.sendStatus(402);
+        res.sendStatus(401);
+        return;
+    }
+}
+
+const adoptPlan = async (req, res) => {
+    const profile = req.session['profile'];
+    const {plan} = req.body;
+
+    if(profile && plan) {
+        const response = await usersDao.addPlanToUser(profile._id, plan);
+        res.send(response);
+        return;
+    } else {
+        res.sendStatus(401);
         return;
     }
 }
 
 const userController = (app) => {
     app.post("/api/favorites", favorites);
+    app.put("/api/adopt", adoptPlan);
 }
 export default userController;
