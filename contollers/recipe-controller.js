@@ -16,8 +16,7 @@ const findById = async (req, res) => {
 
     const recipe = await recipeDao.findById(mealId)
     if (recipe !== null) {
-        const toReturn = {...recipe.toObject(), liked: recipe.liked.length};
-        res.json(toReturn);
+        res.json(recipe);
     } else {
         res.sendStatus(404);
     }
@@ -47,7 +46,6 @@ const likeRecipe = async (req, res) => {
 
                 //remove it from users favorites
                 const newFavRecipes = user.favoriteRecipes.filter(rec => rec.idMeal !== currentRecipe.toObject().idMeal);
-                console.log(newFavRecipes);
                 user = {...user, favoriteRecipes: newFavRecipes};
                 status = await usersDao.updateUser(user._id, user);
             } else {
@@ -80,9 +78,27 @@ const likeRecipe = async (req, res) => {
     return;
 }
 
+const addRecipe = async (req, res) => {
+    const {recipe} = req.body;
+    try {
+        const currentRecipe = await recipeDao.findById(recipe.idMeal);
+        console.log(currentRecipe);
+        if (currentRecipe) {
+            res.sendStatus(400);
+        } else {
+            const newRecipe = await recipeDao.createRecipe(recipe);
+            res.json(newRecipe);
+        }
+    } catch (e) {
+        console.log(e);
+        res.sendStatus(500);
+    }
+}
+
 const recipeController =  (app) => {
     app.get('/api/meals', findAllRecipes);
     app.get('/api/meals/:rid', findById);
+    app.post('/api/meals', addRecipe);
     app.put('/api/like', likeRecipe);
 }
 export default recipeController;

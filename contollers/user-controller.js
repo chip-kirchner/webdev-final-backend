@@ -21,7 +21,8 @@ const adoptPlan = async (req, res) => {
 
     if(profile && plan) {
         const response = await usersDao.addPlanToUser(profile._id, plan);
-        res.send(response);
+        req.session['profile'] = response;
+        res.json(response);
         return;
     } else {
         res.sendStatus(401);

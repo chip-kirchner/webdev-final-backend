@@ -9,21 +9,29 @@ const getPosts = async (req, res) => {
 const createPost = async (req, res) => {
     const {post} = req.body;
     const user = req.session['profile'];
-    console.log(user);
     //Does this recipe already exist in our database?
     const currentRecipe = await recipeDao.findById(post.recipe.idMeal);
     //If it does add the ObjectId to this post
-    if (currentRecipe) {
-        const newPost = {...post, recipe: currentRecipe, user: user};
-        const response = await postDao.createPost(newPost);
-        res.send(response);
-        //If it doesn't, create it and add the new objectId to this post
+    if (user) {
+        if (currentRecipe) {
+            const newPost = {...post, recipe: currentRecipe, user: user};
+            const response = await postDao.createPost(newPost);
+            const toReturn = await postDao.findById(response._id);
+            console.log(toReturn);
+            res.json(toReturn);
+            //If it doesn't, create it and add the new objectId to this post
+        } else {
+            const newRecipe = await recipeDao.createRecipe(post.recipe);
+            const newPost = {...post, recipe: newRecipe, user: user};
+            const response = await postDao.createPost(newPost);
+            const toReturn = await postDao.findById(response._id);
+            console.log(toReturn);
+            res.json(toReturn);
+        }
     } else {
-        const newRecipe = await recipeDao.createRecipe(post.recipe);
-        const newPost = {...post, recipe: newRecipe, user: user};
-        const response = await postDao.createPost(newPost);
-        res.send(response);
+        res.sendStatus(401);
     }
+
 }
 
 const deletePost = async (req, res) => {

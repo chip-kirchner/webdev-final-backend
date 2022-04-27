@@ -45,8 +45,8 @@ const updateProfile = async (req, res) => {
         try {
             const newProfile = {...oldProfile, ...profile};
             const response = await usersDao.updateUser(oldProfile._id, newProfile);
-            req.session['profile'] = newProfile;
-            res.json(newProfile);
+            req.session['profile'] = response;
+            res.json(response);
         } catch (e) {
             res.sendStatus(503);
         }

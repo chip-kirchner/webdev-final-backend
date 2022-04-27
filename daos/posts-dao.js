@@ -2,7 +2,7 @@ import postModel from "../models/post-model.js"
 
 export const findAll = async () => postModel.find().populate('recipe').populate('user', '-password -email').sort({createdAt: 'desc'});
 
-export const findById = async (_id) => postModel.findOne({_id: _id});
+export const findById = async (_id) => postModel.findOne({_id: _id}).populate('recipe').populate('user', '-password -email');
 
 export const createPost = async (post) => postModel.create(post);
 
