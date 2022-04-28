@@ -3,9 +3,10 @@ const schema = mongoose.Schema({
     email: {type: String, required: true, unique: true},
     password: {type:String, required: true},
     name: {type: String, default: ""},
-    role: {type: String, required: true, default: "pleb"},
+    role: {type: String, required: true, enum: ['standard', 'planner', 'moderator'], default: 'standard'},
     favoriteRecipes: [{idMeal: Number}],
     following: [{type: mongoose.Schema.Types.ObjectId, ref: 'users'}],
+    followedBy: [{type: mongoose.Schema.Types.ObjectId, ref: 'users'}],
     plan: {
         sunday: {type: mongoose.Schema.Types.ObjectId, ref: 'recipes'},
         monday: {type: mongoose.Schema.Types.ObjectId, ref: 'recipes'},

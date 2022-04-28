@@ -7,7 +7,7 @@ export const findAll = async () => plansModel.find().populate('sunday')
     .populate('thursday')
     .populate('friday')
     .populate('saturday')
-    .populate('user', '-password -email');
+    .populate('user', '-password -email').sort({createdAt: 'desc'});
 
 export const findOne = async (_id) => plansModel.findOne({_id});
 
