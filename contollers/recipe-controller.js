@@ -23,6 +23,28 @@ const findById = async (req, res) => {
 
 };
 
+const unlikeRecipe = async (req, res) => {
+    const {recipe} = req.body;
+    const user = req.session['profile'];
+
+    //Check if this recipe exists if not do nothing
+    const currentRecipe = await recipeDao.findById(recipe.idMeal);
+    if (currentRecipe) {
+        //Filter out this recipe if is in the users favorites
+        const newFavorites = user.favoriteRecipes.filter(rec => !currentRecipe.toObject()._id.equals(rec._id));
+        await usersDao.updateUser(user._id, {...user, favoriteRecipes: newFavorites})
+        req.session['profile'] = {...user, favoriteRecipes: newFavorites};
+
+        //Filter out the user if they are in the recipes liked
+        const newLiked = currentRecipe.liked.filter(liker => !liker._id.equals(user._id));
+        await recipeDao.updateRecipe(currentRecipe.idMeal, {...currentRecipe.toObject(), liked: newLiked});
+        res.sendStatus(200);
+    } else {
+        res.sendStatus(400);
+        return;
+    }
+}
+
 const likeRecipe = async (req, res) => {
     const {recipe} = req.body;
     let user = req.session['profile'];
@@ -45,7 +67,7 @@ const likeRecipe = async (req, res) => {
                 status = await recipeDao.updateRecipe(recipe.idMeal, {...currentRecipe.toObject(), liked: notInclude})
 
                 //remove it from users favorites
-                const newFavRecipes = user.favoriteRecipes.filter(rec => rec.idMeal !== currentRecipe.toObject().idMeal);
+                const newFavRecipes = user.favoriteRecipes.filter(rec => !currentRecipe.toObject()._id.equals(rec._id));
                 user = {...user, favoriteRecipes: newFavRecipes};
                 status = await usersDao.updateUser(user._id, user);
             } else {
@@ -60,11 +82,11 @@ const likeRecipe = async (req, res) => {
             }
         } else{
             //if its not in database then create it
-            status = await recipeDao.createRecipe({...recipe, liked: [user]});
+            const newRecipe = await recipeDao.createRecipe({...recipe, liked: [user]});
 
             //and add it to users favorites
-            const newFavRecipes = [...user.favoriteRecipes, recipe];
-            user = {...user, favoriteRecipes: newFavRecipes}
+            const newFavRecipes = [...user.favoriteRecipes, newRecipe];
+            user = {...user, favoriteRecipes: newFavRecipes};
             status = await usersDao.updateUser(user._id, user);
         }
     } else {
@@ -100,5 +122,6 @@ const recipeController =  (app) => {
     app.get('/api/meals/:rid', findById);
     app.post('/api/meals', addRecipe);
     app.put('/api/like', likeRecipe);
+    app.put("/api/unlike", unlikeRecipe);
 }
 export default recipeController;

@@ -5,9 +5,8 @@ const favorites = async (req, res) => {
     const profile = req.session['profile'];
 
     if (profile) {
-        const recipes = profile.favoriteRecipes.map(recipe => recipe.idMeal);
-        const response = await recipeDao.findTheseRecipes(recipes);
-        res.json(response.map(temp => ({...temp.toObject(), liked: temp.liked.length})));
+        const recipes = profile.favoriteRecipes;
+        res.json(recipes);
         return;
     } else {
         res.sendStatus(401);
@@ -56,9 +55,10 @@ const follow = async (req, res) => {
 
         //Does this user exists and do we already follow?
         const verif = await usersDao.findById(toFollow._id);
-        if (verif && verif.toObject().followedBy.filter(u => u.equals(follower._id)).length === 0) {
+        if (verif && verif.toObject().followedBy.filter(u => u._id.equals(follower._id)).length === 0) {
             try{
                 await usersDao.followUser(follower, toFollow);
+                req.session['profile'] = {...follower, following: [...follower.following, verif]}
                 res.sendStatus(200);
             } catch(e) {
                 console.log(e);
@@ -79,18 +79,17 @@ const unfollow = async (req, res) => {
         const toFollow = req.body;
 
         //If we aren't following do nothing
-        if (follower.following.filter(u => u === toFollow._id).length === 0) {
-            console.log(follower.following);
+        if (follower.following.filter(u => u._id === toFollow._id).length === 0) {
             res.sendStatus(400);
             return;
         }
 
         //Does this user exists and do we already follow?
         const verif = await usersDao.findById(toFollow._id);
-        if (verif && verif.toObject().followedBy.filter(u => u.equals(follower._id)).length > 0) {
+        if (verif && verif.toObject().followedBy.filter(u => u._id.equals(follower._id)).length > 0) {
             try{
-                console.log(follower);
                 await usersDao.unfollowUser(follower, verif);
+                req.session['profile'] = {...follower, following: verif.toObject().followedBy.filter(u => !u._id.equals(follower._id))}
                 res.sendStatus(200);
             } catch(e) {
                 console.log(e);

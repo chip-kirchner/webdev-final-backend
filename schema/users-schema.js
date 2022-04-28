@@ -4,7 +4,7 @@ const schema = mongoose.Schema({
     password: {type:String, required: true},
     name: {type: String, default: ""},
     role: {type: String, required: true, enum: ['standard', 'planner', 'moderator'], default: 'standard'},
-    favoriteRecipes: [{idMeal: Number}],
+    favoriteRecipes: [{type: mongoose.Schema.Types.ObjectId, ref: 'recipes'}],
     following: [{type: mongoose.Schema.Types.ObjectId, ref: 'users'}],
     followedBy: [{type: mongoose.Schema.Types.ObjectId, ref: 'users'}],
     plan: {

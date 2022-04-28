@@ -5,7 +5,10 @@ export const findUserByEmail= async (email) => {
     return user;
 };
 
-export const findById = async (_id) => userModel.findById({_id}, {password: 0, email: 0});
+export const findById = async (_id) => userModel.findById({_id}, {password: 0, email: 0})
+    .populate({path: 'following', select: '_id name role'})
+    .populate({path: 'followedBy', select: '_id name role'})
+    .populate('favoriteRecipes');
 
 export const findUserByCredentials = async (email, password) => userModel.findOne({email, password}).populate({path: 'plan', populate: [
         {path: 'monday', model: 'recipes'},
@@ -16,7 +19,9 @@ export const findUserByCredentials = async (email, password) => userModel.findOn
         {path: 'saturday', model: 'recipes'},
         {path: 'sunday', model: 'recipes'}
     ]
-});
+}).populate({path: 'following', select: '_id name role'})
+    .populate({path: 'followedBy', select: '_id name role'})
+    .populate('favoriteRecipes');
 
 export const createUser = async (user) => userModel.create(user);
 
@@ -29,7 +34,9 @@ export const updateUser = async (_id, user) => userModel.findByIdAndUpdate({_id}
         {path: 'saturday', model: 'recipes'},
         {path: 'sunday', model: 'recipes'}
     ]
-});
+}).populate({path: 'following', select: '_id name role'})
+    .populate({path: 'followedBy', select: '_id name role'})
+    .populate('favoriteRecipes');
 
 export const addPlanToUser = async (_id, plan) => userModel.findByIdAndUpdate({_id}, {$set: {plan: plan}}, {new: true}).populate({path: 'plan', populate: [
         {path: 'monday', model: 'recipes'},
@@ -40,7 +47,9 @@ export const addPlanToUser = async (_id, plan) => userModel.findByIdAndUpdate({_
         {path: 'saturday', model: 'recipes'},
         {path: 'sunday', model: 'recipes'}
     ]
-});
+}).populate({path: 'following', select: '_id name role'})
+    .populate({path: 'followedBy', select: '_id name role'})
+    .populate('favoriteRecipes');
 
 export const followUser = async (follower, followee) => {
         await userModel.findByIdAndUpdate({_id: follower._id}, {$push: {following: followee._id}});
