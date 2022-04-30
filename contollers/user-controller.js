@@ -1,5 +1,6 @@
 import * as usersDao from "../daos/users-dao.js";
 import * as recipeDao from "../daos/recipe-dao.js";
+import * as postDao from "../daos/posts-dao.js";
 
 const favorites = async (req, res) => {
     const profile = req.session['profile'];
@@ -104,11 +105,58 @@ const unfollow = async (req, res) => {
     }
 }
 
+const getAll = async (req, res) => {
+    const profile = req.session['profile'];
+
+    if (profile && profile.role === 'moderator') {
+        const response = await usersDao.findAll();
+        res.json(response);
+        return;
+    }
+    res.sendStatus(401);
+}
+
+const deleteUser = async (req, res) => {
+    const profile = req.session['profile'];
+    const uid = req.params.uid;
+
+    if (profile && profile.role === 'moderator') {
+        try {
+            //delete users posts
+            const response = await postDao.deleteUsersPosts(uid);
+            //ulike users posts
+            console.log(response);
+            const other = await postDao.unlikePosts(uid);
+            console.log(other);
+            //delete users plans
+
+            //unlike recipes
+
+            //unfollow other users
+
+            //unfollow this user
+
+            //remove their account
+            //const response = await usersDao.deleteUser(uid);
+            res.send(response);
+        } catch (e) {
+            console.log(e);
+            res.sendStatus(500);
+        }
+
+    } else {
+        res.sendStatus(401);
+        return;
+    }
+}
+
 const userController = (app) => {
     app.post("/api/favorites", favorites);
     app.put("/api/adopt", adoptPlan);
     app.get("/api/user/:uid", getUser);
     app.post("/api/follow", follow);
     app.post("/api/unfollow", unfollow);
+    app.post("/api/users", getAll);
+    app.delete("/api/users/:uid", deleteUser);
 }
 export default userController;

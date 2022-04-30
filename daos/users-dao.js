@@ -5,6 +5,8 @@ export const findUserByEmail= async (email) => {
     return user;
 };
 
+export const findAll = async () => userModel.find({}, {password: 0});
+
 export const findById = async (_id) => userModel.findById({_id}, {password: 0, email: 0})
     .populate({path: 'following', select: '_id name role'})
     .populate({path: 'followedBy', select: '_id name role'})
@@ -62,3 +64,5 @@ export const unfollowUser = async (follower, followee) => {
         const response = await userModel.findByIdAndUpdate({_id: followee._id}, {$pull: {followedBy: follower._id}});
         return response;
 }
+
+export const deleteUser = async (_id) => await userModel.deleteOne({_id});
