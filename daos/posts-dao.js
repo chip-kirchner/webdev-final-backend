@@ -10,6 +10,6 @@ export const updatePost = async (_id, post) => postModel.updateOne({_id}, {$set:
 
 export const deletePost = async (post) => postModel.deleteOne(post);
 
-export const deleteUsersPosts = async (_id) => postModel.find({user: _id});
+export const deleteUsersPosts = async (_id) => postModel.deleteMany({user: _id});
 
-export const unlikePosts = async (_id) => postModel.find({likedBy: {_id}});
+export const unlikePosts = async (_id) => postModel.updateMany({likedBy: {_id}},{$pull: {likedBy: _id}});

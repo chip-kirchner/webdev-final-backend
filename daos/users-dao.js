@@ -8,8 +8,8 @@ export const findUserByEmail= async (email) => {
 export const findAll = async () => userModel.find({}, {password: 0});
 
 export const findById = async (_id) => userModel.findById({_id}, {password: 0, email: 0})
-    .populate({path: 'following', select: '_id name role'})
-    .populate({path: 'followedBy', select: '_id name role'})
+    .populate({path: 'following', select: '_id name role following'})
+    .populate({path: 'followedBy', select: '_id name role following'})
     .populate('favoriteRecipes');
 
 export const findUserByCredentials = async (email, password) => userModel.findOne({email, password}).populate({path: 'plan', populate: [
@@ -21,8 +21,8 @@ export const findUserByCredentials = async (email, password) => userModel.findOn
         {path: 'saturday', model: 'recipes'},
         {path: 'sunday', model: 'recipes'}
     ]
-}).populate({path: 'following', select: '_id name role'})
-    .populate({path: 'followedBy', select: '_id name role'})
+}).populate({path: 'following', select: '_id name role following'})
+    .populate({path: 'followedBy', select: '_id name role following'})
     .populate('favoriteRecipes');
 
 export const createUser = async (user) => userModel.create(user);
@@ -36,8 +36,8 @@ export const updateUser = async (_id, user) => userModel.findByIdAndUpdate({_id}
         {path: 'saturday', model: 'recipes'},
         {path: 'sunday', model: 'recipes'}
     ]
-}).populate({path: 'following', select: '_id name role'})
-    .populate({path: 'followedBy', select: '_id name role'})
+}).populate({path: 'following', select: '_id name role following'})
+    .populate({path: 'followedBy', select: '_id name role following'})
     .populate('favoriteRecipes');
 
 export const addPlanToUser = async (_id, plan) => userModel.findByIdAndUpdate({_id}, {$set: {plan: plan}}, {new: true}).populate({path: 'plan', populate: [
@@ -49,8 +49,8 @@ export const addPlanToUser = async (_id, plan) => userModel.findByIdAndUpdate({_
         {path: 'saturday', model: 'recipes'},
         {path: 'sunday', model: 'recipes'}
     ]
-}).populate({path: 'following', select: '_id name role'})
-    .populate({path: 'followedBy', select: '_id name role'})
+}).populate({path: 'following', select: '_id name role following'})
+    .populate({path: 'followedBy', select: '_id name role following'})
     .populate('favoriteRecipes');
 
 export const followUser = async (follower, followee) => {
@@ -66,3 +66,7 @@ export const unfollowUser = async (follower, followee) => {
 }
 
 export const deleteUser = async (_id) => await userModel.deleteOne({_id});
+
+export const unfollowAll = async (_id) => userModel.updateMany({followedBy: {_id}}, {$pull: {followedBy: _id}});
+
+export const unfollowMe = async (_id) => userModel.updateMany({following: {_id}}, {$pull: {following: _id}});

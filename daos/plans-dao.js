@@ -19,5 +19,6 @@ export const publishPlan = async (_id) => plansModel.updateOne({_id}, {$set: {pu
 
 export const deletePlan = async (plan) => plansModel.deleteOne(plan);
 
+export const deleteUserPlans = async (_id) => plansModel.deleteMany({user: _id});
 
 

@@ -1,6 +1,8 @@
 import * as usersDao from "../daos/users-dao.js";
 import * as recipeDao from "../daos/recipe-dao.js";
 import * as postDao from "../daos/posts-dao.js";
+import * as plansDao from "../daos/plans-dao.js";
+import {unfollowMe} from "../daos/users-dao.js";
 
 const favorites = async (req, res) => {
     const profile = req.session['profile'];
@@ -123,21 +125,19 @@ const deleteUser = async (req, res) => {
     if (profile && profile.role === 'moderator') {
         try {
             //delete users posts
-            const response = await postDao.deleteUsersPosts(uid);
-            //ulike users posts
-            console.log(response);
-            const other = await postDao.unlikePosts(uid);
-            console.log(other);
+            await postDao.deleteUsersPosts(uid);
+            //unlike users posts
+            await postDao.unlikePosts(uid);
             //delete users plans
-
+            await plansDao.deleteUserPlans(uid);
             //unlike recipes
-
+            await recipeDao.deleteUserLikes(uid);
             //unfollow other users
-
+            await usersDao.unfollowAll(uid);
             //unfollow this user
-
+            await usersDao.unfollowMe(uid);
             //remove their account
-            //const response = await usersDao.deleteUser(uid);
+            const response = await usersDao.deleteUser(uid);
             res.send(response);
         } catch (e) {
             console.log(e);

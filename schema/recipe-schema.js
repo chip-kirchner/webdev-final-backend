@@ -8,5 +8,5 @@ const schema = mongoose.Schema({
     strArea: String,
     strCategory: String,
     liked: [{user: {type: mongoose.Schema.Types.ObjectId, ref: 'users'}}]
-}, {collection: 'recipes'});
+}, {collection: 'recipes', timestamps: true});
 export default schema;

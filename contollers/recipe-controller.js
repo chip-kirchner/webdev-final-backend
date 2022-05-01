@@ -117,11 +117,22 @@ const addRecipe = async (req, res) => {
     }
 }
 
+const getRecommend = async (req, res) => {
+    try {
+        const response = await recipeDao.threeMostRecent();
+        res.json(response);
+    } catch (e) {
+        console.log(e);
+        res.sendStatus(500);
+    }
+}
+
 const recipeController =  (app) => {
     app.get('/api/meals', findAllRecipes);
     app.get('/api/meals/:rid', findById);
     app.post('/api/meals', addRecipe);
     app.put('/api/like', likeRecipe);
     app.put("/api/unlike", unlikeRecipe);
+    app.get("/api/recommended", getRecommend);
 }
 export default recipeController;
