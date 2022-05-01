@@ -17,4 +17,4 @@ export const createRecipe = async (recipe) => recipeModel.create(recipe);
 
 export const deleteUserLikes = async (_id) => recipeModel.updateMany({liked: {_id}}, {$pull: {liked: {_id}}});
 
-export const threeMostRecent = async () => recipeModel.find().sort({updatedAt: 'desc'}).limit(3);
+export const threeMostRecent = async () => recipeModel.find().sort({updatedAt: 'desc'}).limit(5);
