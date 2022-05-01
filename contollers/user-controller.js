@@ -2,7 +2,6 @@ import * as usersDao from "../daos/users-dao.js";
 import * as recipeDao from "../daos/recipe-dao.js";
 import * as postDao from "../daos/posts-dao.js";
 import * as plansDao from "../daos/plans-dao.js";
-import {unfollowMe} from "../daos/users-dao.js";
 
 const favorites = async (req, res) => {
     const profile = req.session['profile'];

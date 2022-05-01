@@ -3,11 +3,6 @@ import * as usersDao from "../daos/users-dao.js";
 
 const findAllRecipes = async (req, res) => {
     const recipes = await recipeDao.findAllRecipes();
-    const toReturn = recipes.map(
-        (recipe) => {
-            return({...recipe, liked: recipe.liked.length});
-        }
-    );
     res.json(recipes);
 };
 
@@ -104,7 +99,6 @@ const addRecipe = async (req, res) => {
     const {recipe} = req.body;
     try {
         const currentRecipe = await recipeDao.findById(recipe.idMeal);
-        console.log(currentRecipe);
         if (currentRecipe) {
             res.sendStatus(400);
         } else {

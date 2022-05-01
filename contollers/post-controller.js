@@ -17,7 +17,6 @@ const createPost = async (req, res) => {
             const newPost = {...post, recipe: currentRecipe, user: user};
             const response = await postDao.createPost(newPost);
             const toReturn = await postDao.findById(response._id);
-            console.log(toReturn);
             res.json(toReturn);
             //If it doesn't, create it and add the new objectId to this post
         } else {
@@ -25,7 +24,6 @@ const createPost = async (req, res) => {
             const newPost = {...post, recipe: newRecipe, user: user};
             const response = await postDao.createPost(newPost);
             const toReturn = await postDao.findById(response._id);
-            console.log(toReturn);
             res.json(toReturn);
         }
     } else {

@@ -31,7 +31,6 @@ const createPlan = async (req, res) => {
 
     if (user) {
         const newPlan = {...plan, user: user};
-        console.log(newPlan);
         try{
             const response = await plansDao.createPlan(newPlan);
             res.json(response);

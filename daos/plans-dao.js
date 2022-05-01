@@ -13,8 +13,6 @@ export const findOne = async (_id) => plansModel.findOne({_id});
 
 export const createPlan = async (plan) => plansModel.create(plan);
 
-export const updatePlan = async (_id, plan) => plansModel.updateOne({_id}, {$set: plan});
-
 export const publishPlan = async (_id) => plansModel.updateOne({_id}, {$set: {publish: true}});
 
 export const deletePlan = async (plan) => plansModel.deleteOne(plan);
